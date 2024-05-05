@@ -24,7 +24,7 @@ config = {
     {
         'veadotube': {
             'state': 'sad',
-            'durnation': 10
+            'duration': 10
         }
     },
     {

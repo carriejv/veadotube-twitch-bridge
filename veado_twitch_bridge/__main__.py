@@ -1,9 +1,11 @@
 import asyncio
-import signal
+import logging
 
 import twitch.twitch
 from veadotube.connection import VeadotubeConnection
 from config import get_config
+
+logging.basicConfig(format='%(asctime)s %(levelname)s %(name)s : %(message)s', level=logging.INFO)
 
 async def main():
     """Initializes config reader and global ticks for Veadotube / Twitch."""
