@@ -34,7 +34,14 @@ class VeadotubeConnection:
         if self.open_socket is not None:
             # TOOD: error
             return
-        self.open_socket = await websockets.connect(self.uri)
+        attempts = 1
+        while self.open_socket is None and self.reconnect and self.reconnect_attempts == 0 or attempts <= self.reconnect_attempts:
+            try:
+                self.open_socket = await websockets.connect(self.uri)
+            except Exception as e:
+                logger.warning(f'Failed to connect to the websocket (attempt {attempts}/{self.reconnect_attempts or '∞'}): {e}. Trying again in {self.reconnect_delay}...')
+                attempts += 1
+                await asyncio.sleep(self.reconnect_delay)
         logger.info(f'Opened websocket on {self.uri}.')
         # Spawn a separate task to listen for messages and queue events.
         self.open_tasks.append(asyncio.create_task(self.message_handler()))
@@ -104,13 +111,13 @@ class VeadotubeConnection:
 
     async def reconnect_loop(self):
         """Iniitalizes a loop that attempts to reconnect to the socket server."""
-        attempts = 0
-        while self.reconnect_attempts == 0 or attempts < self.reconnect_attempts:
+        attempts = 1
+        while self.reconnect_attempts == 0 or attempts <= self.reconnect_attempts:
             try:
                 self.open_socket = await websockets.connect(self.uri)
                 return
-            except:
-                logger.warning(f'Failed to reconnect to the websocket (attempt {attempts}/${self.reconnect_attempts}). Trying again in {self.reconnect_delay}...')
+            except Exception as e:
+                logger.warning(f'Failed to reconnect to the websocket (attempt {attempts}/{self.reconnect_attempts or '∞'}): {e}. Trying again in {self.reconnect_delay}...')
                 attempts += 1
                 await asyncio.sleep(self.reconnect_delay)
         # TODO: custom error probably lol
