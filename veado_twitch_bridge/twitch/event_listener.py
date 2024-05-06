@@ -94,10 +94,10 @@ class TwitchEventListener:
                 await self.eventsub.listen_channel_points_custom_reward_redemption_add(self.userid, self._channel_point_handler)
         logger.info(f'Successfully initialzed subscription to {event} events.')
 
-    async def _channel_point_handler(data: ChannelPointsCustomRewardRedemptionAddEvent):
+    async def _channel_point_handler(self, data: ChannelPointsCustomRewardRedemptionAddEvent, *args):
         """Internal low-level handler for channel point rewards that runs high-level handlers added by set_handler."""
-        async for handler in self.handler_map['channel_point_redeem']:
-            handler({
+        for handler in self.handler_map['channel_point_redeem']:
+            await handler({
                 'event': 'channel_point_redeem',
                 'source': data.event.user_name,
                 'name': data.event.reward.title

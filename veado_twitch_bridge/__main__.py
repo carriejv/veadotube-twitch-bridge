@@ -15,18 +15,18 @@ async def main():
     async with VeadotubeConnection(config['veadotube']['socket_server'], default_duration=config['veadotube']['default_duration']) as vtc, \
                TwitchEventListener(config['twitch']['client_id'], config['twitch']['client_secret']) as twitch:
         for binding in config['event_binding']:
-            await twitch.set_handler(binding['twitch']['event'], await build_handler(binding))
+            await twitch.set_handler(binding['twitch']['event'], await build_handler(binding, vtc))
         await asyncio.Future()
 
-async def build_handler(event_binding):
+async def build_handler(event_binding, vedotube_connection):
     """Builds a handler function for a specific event binding."""
     async def handler(event):
-        if event_binding['twitch'].get('source') is not None and event.source != event_binding['twitch']['source']:
+        if event_binding['twitch'].get('source') is not None and event['source'] != event_binding['twitch']['source']:
             return
-        if event_binding['twitch'].get('name') is not None and event.name != event_binding['twitch']['name']:
+        if event_binding['twitch'].get('name') is not None and event['name'] != event_binding['twitch']['name']:
             return
-        await vtc.enqueue_state_event(binding['veadotube'])
-        logger.info(f'Received an {event.event} event and queued the following state change: {binding['veadotube']}.')
+        await vedotube_connection.enqueue_state_event(event_binding['veadotube'])
+        logger.info(f'Received a {event['event']} event and queued the following state change: {event_binding['veadotube']}.')
     return handler
 
 try:
