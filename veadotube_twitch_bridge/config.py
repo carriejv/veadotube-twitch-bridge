@@ -17,7 +17,7 @@ def get_config():
     return tomlkit.parse(toml_contents)
 
 def find_config_file():
-    user_cfg_dir = platformdirs.user_config_dir('veado-twitch-bridge')
+    user_cfg_dir = platformdirs.user_config_dir('veadotube-twitch-bridge')
     for path in [CONFIG_FILE_NAME, os.path.join(user_cfg_dir, CONFIG_FILE_NAME)]:
         if os.path.isfile(path):
             logger.info(f'Found config file at {path}.')

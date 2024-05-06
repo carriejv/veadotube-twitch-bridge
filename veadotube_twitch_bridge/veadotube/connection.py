@@ -90,7 +90,13 @@ class VeadotubeConnection:
             if self.state_map is None:
                 await asyncio.sleep(1)
                 continue
-            state_event = await self.state_queue.get()
+            state_event = None
+            # Technically we can just await get(), but the poll rate is really slow for our purposes.
+            try:
+                state_event = self.state_queue.get_nowait()
+            except asyncio.QueueEmpty:
+                await asyncio.sleep(1)
+                continue
             logger.info(f'Handling event from queue: {state_event}.')
             # Keep trying until we send successfully.
             duration = state_event.get('duration', self.default_duration)
@@ -126,7 +132,7 @@ class VeadotubeConnection:
 
     async def enqueue_state_event(self, state_event):
         logger.info(f'Added event to queue: {state_event}.')
-        await self.state_queue.put(state_event)
+        self.state_queue.put_nowait(state_event)
 
     async def build_state_map(self, state_list_json):
         """Builds a map of available avatar states. Called automatically on open(), but may be subsequently re-called to update the map."""

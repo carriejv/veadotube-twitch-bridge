@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "veado-twitch-bridge"
+name = "veadotube-twitch-bridge"
 version = "0.1.0"
 description = ""
 authors = ["Carrie J V <carrie@carriejv.com>"]
