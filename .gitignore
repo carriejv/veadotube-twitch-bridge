@@ -161,3 +161,4 @@ cython_debug/
 
 # veadotube-twitch-bridge config file
 config.toml
+!example/config.toml

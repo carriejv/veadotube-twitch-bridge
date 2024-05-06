@@ -1,0 +1,33 @@
+[twitch]
+client_id = "YOUR_ID_HERE"
+client_secret = "YOUR_KEY_HERE"
+
+[veadotube]
+socket_server = "ws://127.0.0.1:39731?n=veadotube_twitch_bridge"
+default_duration = 30
+
+[[event_binding]]
+[event_binding.twitch]
+event = "channel_point_redeem"
+name = "Make me sad."
+[event_binding.veadotube]
+state = "sad"
+duration = 10
+revert = true
+
+[[event_binding]]
+[event_binding.twitch]
+event = "channel_point_redeem"
+name = "Make me laugh."
+[event_binding.veadotube]
+state = "laugh"
+duration = 10
+revert = true
+
+[[event_binding]]
+[event_binding.twitch]
+channel = "nyori"
+event = "channel_point_redeem"
+name = "Swap outfits!"
+[event_binding.veadotube]
+state = "outfit2"
