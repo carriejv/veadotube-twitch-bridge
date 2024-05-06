@@ -12,9 +12,6 @@ logger = logging.getLogger(__name__)
 async def main():
     """Initializes config reader and listeners for Veadotube / Twitch."""
     config = get_config()
-    twt = TwitchEventListener(config['twitch']['client_id'], config['twitch']['client_secret'])
-    await twt.open()
-    await twt.set_handler(config['event_binding'][0]['twitch']['event'], await build_handler(config['event_binding'][0]))
     async with VeadotubeConnection(config['veadotube']['socket_server'], default_duration=config['veadotube']['default_duration']) as vtc, \
                TwitchEventListener(config['twitch']['client_id'], config['twitch']['client_secret']) as twitch:
         for binding in config['event_binding']:
